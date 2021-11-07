@@ -17,22 +17,23 @@ def maxping():
     packet_info=output.split()[packets_transmited_start_index:packets_transmited_start_index+12]
     
     #Find the line that contains the Maximum ping time
-    maxping=int(output.split()[output.split().index("Maximum")+2][:2])
+    if "Maximum" in output:
+        maxping=int(output.split()[output.split().index("Maximum")+2][:2])
+        #Detailed information about the ping
+        print(' '.join([str(elem) for elem in packet_info])[:-1], "Maximum Ping :", maxping)
+    else:
+        maxping=0
     
-    #Detailed information about the ping
-    print(' '.join([str(elem) for elem in packet_info])[:-1], "MaxPing :", maxping)
-
-
     #Categorize the ping information
-    if "0% loss" in output:
-        return 0
-    elif "100% loss" in output:
-        return "0 packet sent;"+ str(maxping) + "ms;" + str(time.ctime())+"\n"
+    if "Destination host unreachable." in output:
+        return "Destination host unreachable;" +str(maxping) + "ms;" + str(time.ctime())+"\n"
+    elif "0% loss" not in output:
+        percent_of_lost_packets=packet_info[10].split("(")[1]
+        return percent_of_lost_packets+ " loss;" + str(maxping) + "ms;" + str(time.ctime())+"\n"
     elif maxping>250:
         return "high ping;"+ str(maxping) + "ms;" + str(time.ctime())+"\n"
-    else:
-        return "packet lost;" + str(maxping) + "ms;" + str(time.ctime())+"\n"
-
+    elif "time=" in output:
+        return 0
 
 def write_to_file(info,filename="ping.csv"):
     """This file writes information to the created file"""
