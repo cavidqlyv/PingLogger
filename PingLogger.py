@@ -16,12 +16,12 @@ def maxping():
     packets_transmited_start_index=output.split().index("Packets:")
     packet_info=output.split()[packets_transmited_start_index:packets_transmited_start_index+12]
     
-    #Detailed information about the ping
-    print(' '.join([str(elem) for elem in packet_info])[:-1])
-
     #Find the line that contains the Maximum ping time
     maxping=int(output.split()[output.split().index("Maximum")+2][:2])
-    print(maxping)
+    
+    #Detailed information about the ping
+    print(' '.join([str(elem) for elem in packet_info])[:-1], "MaxPing :", maxping)
+
 
     #Categorize the ping information
     if "0% loss" in output:
@@ -34,7 +34,7 @@ def maxping():
         return "packet lost;" + str(maxping) + "ms;" + str(time.ctime())+"\n"
 
 
-def write_to_file(info,filename="ping.txt"):
+def write_to_file(info,filename="ping.csv"):
     """This file writes information to the created file"""
     f = open(filename, "a")
     f.write(info)
@@ -46,7 +46,7 @@ def main():
         pingobj=maxping()
         if pingobj!=0:
             print(pingobj)
-            write_to_file(pingobj)
+            write_to_file(pingobj,filename="ping.csv")
         time.sleep(0.01)
 
 if __name__=="__main__":
